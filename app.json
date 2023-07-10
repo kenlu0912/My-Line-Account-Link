@@ -12,15 +12,15 @@
     }
   ],
   "env": {
-    "LINECORP_PLATFORM_CHANNEL_CHANNELSECRET": {
+    "f05e6279886c10382f99b949efe09e4d": {
       "description": "Channel secret",
       "required": true
     },
-    "LINECORP_PLATFORM_CHANNEL_CHANNELTOKEN": {
+    "7tAibeCnzw4lqXLy/FU2Rw0G4JDnVeMZklz3chGeyXYlVAaFXbh+egx5Jm1B3JpWoi40qSzozjP48HnndpRD4qkC0jpg8CGkM9Y4kLfch5zQSxrCgxWm7P+n28TnkZ1FNS30tYuQZgVRwf1C8Cf9mQdB04t89/1O/w1cDnyilFU=": {
       "description": "Channel token",
       "required": true
     },
-    "LINECORP_PLATFORM_CHANNEL_SERVERURL": {
+    "kenlulinebot.azurewebsites.net": {
       "description": "Server URL",
       "required": true
     }

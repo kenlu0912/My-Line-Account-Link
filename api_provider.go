@@ -6,6 +6,16 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"database/sql"
+	_ "github.com/lib/pq"
+)
+
+const (
+	host     = "dpg-cinbnoh8g3nafl536o5g-a.oregon-postgres.render.com"
+	port     = 5432
+	user     = "userlist_user"
+	password = "8wLaPwtCbV6h5O4qIEJRGVoI5PgeZgjz"
+	dbname   = "user"
 )
 
 // CustData : Customers data for provider website.
@@ -18,7 +28,18 @@ type CustData struct {
 	Nonce string
 }
 
+type UserData struct {
+	id       int
+	username string
+	password string
+	name     string
+	age      int
+	descri   string
+	nonce    string
+}
+
 var customers []CustData
+var users     []UserData
 
 func init() {
 	//Init customer data in memory
@@ -27,13 +48,55 @@ func init() {
 		CustData{ID: "22", PW: "pw22", Name: "John", Age: 25, Desc: "He is from B corp. likes to read news paper"},
 		CustData{ID: "44", PW: "pw44", Name: "Mary", Age: 13, Desc: "She is a student, like to read science books"},
 	}...)
+
+	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", host, port, user, password, dbname)
+  
+	// open database
+	db, err := sql.Open("postgres", psqlconn)
+	checkErr(err)
+
+	//查詢資料
+	rows, err := db.Query("SELECT * FROM test")
+	checkErr(err)
+
+	for rows.Next() {
+		var SQLid int
+		var SQLusername string
+		var SQLpassword string
+		var SQLname string
+		var SQLage int
+		var SQLdescri string
+		var SQLnonce string
+		err = rows.Scan(&SQLid, &SQLusername, &SQLpassword, &SQLname, &SQLage, &SQLdescri, &SQLnonce)
+		checkErr(err)
+		fmt.Println(SQLid)
+		fmt.Println(SQLusername)
+		fmt.Println(SQLpassword)
+		fmt.Println(SQLname)
+		fmt.Println(SQLage)
+		fmt.Println(SQLdescri)
+		fmt.Println(SQLnonce)
+
+		users = append(users, []UserData{
+			UserData{id: SQLid, username: SQLusername, password: SQLpassword, name: SQLname, age: SQLage, descri: SQLdescri, nonce: SQLnonce},
+		}...)
+	}
+}
+
+func checkErr(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
 
 // WEB: List all user in memory
 func listCust(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Bookstore customer list as follow:\n")
-	for i, usr := range customers {
-		fmt.Fprintf(w, "%d \tID: %s \tName: %s \tPW: %s \tDesc:%s \n", i, usr.ID, usr.Name, usr.PW, usr.Desc)
+	// for i, usr := range customers {
+	// 	fmt.Fprintf(w, "%d \tID: %s \tName: %s \tPW: %s \tDesc:%s \n", i, usr.ID, usr.Name, usr.PW, usr.Desc)
+	// }
+	for i, usr := range users {
+		fmt.Fprintf(w, "\tid: %d \tusername: %s \tpassword: %s \tname:%s \tage:%d \tdescri:%s \tnonce:%s \n", usr.id, usr.username, usr.password, usr.name, usr.age, usr.descri, usr.nonce)
 	}
 }
 

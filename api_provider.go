@@ -149,8 +149,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 				db, err := sql.Open("postgres", psqlconn)
 				checkErr(err)
 
-				// rows, err := db.Query("UPDATE test SET nonce = '%s' WHERE username = '%s';", users[i].nonce, users[i].username)
-				rows, err := db.Query("UPDATE test SET nonce = '456' WHERE username = 'Joe';")
+				psqlUpdate := fmt.Sprintf("UPDATE test SET nonce = '%s' WHERE username = '%s';", users[i].nonce, users[i].username)
+				rows, err := db.Query(psqlUpdate)
+				// rows, err := db.Query("UPDATE test SET nonce = '456' WHERE username = 'Joe';")
 				_ = rows
    		  checkErr(err)
 

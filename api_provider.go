@@ -110,14 +110,36 @@ func login(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("user")
 	pw := r.FormValue("pass")
 	token := r.FormValue("token")
-	for i, usr := range customers {
-		if usr.ID == name {
-			if pw == usr.PW {
+	// for i, usr := range customers {
+	// 	if usr.ID == name {
+	// 		if pw == usr.PW {
+	// 			//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
+	// 			sNonce := generateNonce(token, name, pw)
+
+	// 			//update nonce to provider DB to store it.
+	// 			customers[i].Nonce = sNonce
+
+	// 			//9. The web server redirects the user to the account-linking endpoint.
+	// 			//10. The user accesses the account-linking endpoint.
+	// 			//Print link to user to click it.
+	// 			targetURL := fmt.Sprintf("https://access.line.me/dialog/bot/accountLink?linkToken=%s&nonce=%s", token, sNonce)
+	// 			log.Println("generate nonce, targetURL=", targetURL)
+	// 			tmpl := template.Must(template.ParseFiles("link.tmpl"))
+	// 			if err := tmpl.Execute(w, targetURL); err != nil {
+	// 				log.Println("Template err:", err)
+	// 			}
+	// 			return
+	// 		}
+	// 	}
+	// }
+	for i, usr := range users {
+		if usr.username == name {
+			if pw == usr.password {
 				//8. The web server acquires the user ID from the provider's service and uses that to generate a nonce.
 				sNonce := generateNonce(token, name, pw)
 
 				//update nonce to provider DB to store it.
-				customers[i].Nonce = sNonce
+				users[i].nonce = sNonce
 
 				//9. The web server redirects the user to the account-linking endpoint.
 				//10. The user accesses the account-linking endpoint.

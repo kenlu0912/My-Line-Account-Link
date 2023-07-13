@@ -81,6 +81,8 @@ func init() {
 			UserData{id: SQLid, username: SQLusername, password: SQLpassword, name: SQLname, age: SQLage, descri: SQLdescri, nonce: SQLnonce},
 		}...)
 	}
+
+	db.Close()
 }
 
 func checkErr(err error) {
@@ -140,6 +142,18 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 				//update nonce to provider DB to store it.
 				users[i].nonce = sNonce
+
+				psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", host, port, user, password, dbname)
+         
+        // open database
+				db, err := sql.Open("postgres", psqlconn)
+				checkErr(err)
+
+				rows, err := db.Query("UPDATE test SET nonce = '%s' WHERE username = '%s';", users[i].nonce, users[i].username)
+				_ = rows
+   		  checkErr(err)
+
+				db.Close()
 
 				//9. The web server redirects the user to the account-linking endpoint.
 				//10. The user accesses the account-linking endpoint.

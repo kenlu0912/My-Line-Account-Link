@@ -96,7 +96,7 @@ func listCust(w http.ResponseWriter, r *http.Request) {
 	// 	fmt.Fprintf(w, "%d \tID: %s \tName: %s \tPW: %s \tDesc:%s \n", i, usr.ID, usr.Name, usr.PW, usr.Desc)
 	// }
 	for i, usr := range users {
-		fmt.Fprintf(w, "\tid: %d \tusername: %s \tpassword: %s \tname:%s \tage:%d \tdescri:%s \tnonce:%s \n", usr.id, usr.username, usr.password, usr.name, usr.age, usr.descri, usr.nonce)
+		fmt.Fprintf(w, "%d \tid: %d \tusername: %s \tpassword: %s \tname:%s \tage:%d \tdescri:%s \tnonce:%s \n", i, usr.id, usr.username, usr.password, usr.name, usr.age, usr.descri, usr.nonce)
 	}
 }
 

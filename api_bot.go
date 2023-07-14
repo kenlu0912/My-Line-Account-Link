@@ -19,7 +19,16 @@ type LinkCustomer struct {
 	LinkUserID string
 }
 
+type LinkedUser struct {
+	name     string
+	age      int
+	descri   string
+	nonce    string
+	LinkUserID string
+}
+
 var linkedCustomers []LinkCustomer
+var linkedUsers     []LinkedUser
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	events, err := bot.ParseRequest(r)
@@ -75,11 +84,22 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				//Check user if it is linked.
-				for _, usr := range linkedCustomers {
+				// for _, usr := range linkedCustomers {
+				// 	if usr.LinkUserID == event.Source.UserID {
+				// 		if _, err = bot.ReplyMessage(
+				// 			event.ReplyToken,
+				// 			linebot.NewTextMessage("Hi "+usr.Name+"!, Nice to see you. \nWe know you: "+usr.Desc+" \nHere is all features ...")).Do(); err != nil {
+				// 			log.Println("err:", err)
+				// 			return
+				// 		}
+				// 		return
+				// 	}
+				// }
+				for _, usr := range linkedUsers {
 					if usr.LinkUserID == event.Source.UserID {
 						if _, err = bot.ReplyMessage(
 							event.ReplyToken,
-							linebot.NewTextMessage("Hi "+usr.Name+"!, Nice to see you. \nWe know you: "+usr.Desc+" \nHere is all features ...")).Do(); err != nil {
+							linebot.NewTextMessage("Hi "+usr.name+"!, Nice to see you. \nWe know you: "+usr.descri+" \nHere is all features ...")).Do(); err != nil {
 							log.Println("err:", err)
 							return
 						}
@@ -109,7 +129,13 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			//11. The LINE Platform sends an event (which includes the LINE user ID and nonce) via webhook to the bot server.
 			// account link success
 			log.Println("EventTypeAccountLink: source=", event.Source, " result=", event.AccountLink.Result)
-			for _, user := range linkedCustomers {
+			// for _, user := range linkedCustomers {
+			// 	if event.Source.UserID == user.LinkUserID {
+			// 		log.Println("User:", user, " already linked account.")
+			// 		return
+			// 	}
+			// }
+			for _, user := range linkedUsers {
 				if event.Source.UserID == user.LinkUserID {
 					log.Println("User:", user, " already linked account.")
 					return
@@ -117,23 +143,43 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			//search from all user using nonce.
-			for _, usr := range customers {
+			for _, usr := range users {
 				//12. The bot server uses the nonce to acquire the user ID of the provider's service.
-				if usr.Nonce == event.AccountLink.Nonce {
+				// if usr.Nonce == event.AccountLink.Nonce {
+				// 	//Append to linked DB.
+				// 	linkedUser := LinkCustomer{
+				// 		Name:       usr.Name,
+				// 		Age:        usr.Age,
+				// 		Desc:       usr.Desc,
+				// 		LinkUserID: event.Source.UserID,
+				// 	}
+
+				// 	linkedCustomers = append(linkedCustomers, linkedUser)
+
+				// 	//Send message back to user
+				// 	if _, err = bot.ReplyMessage(
+				// 		event.ReplyToken,
+				// 		linebot.NewTextMessage("Hi "+usr.Name+" your account already linked to this chatbot.")).Do(); err != nil {
+				// 		log.Println("err:", err)
+				// 		return
+				// 	}
+				// 	return
+				// }
+				if usr.nonce == event.AccountLink.Nonce {
 					//Append to linked DB.
-					linkedUser := LinkCustomer{
-						Name:       usr.Name,
-						Age:        usr.Age,
-						Desc:       usr.Desc,
+					linkedUser := LinkedUser{
+						name:       usr.name,
+						age:        usr.age,
+						descri:     usr.descri,
 						LinkUserID: event.Source.UserID,
 					}
 
-					linkedCustomers = append(linkedCustomers, linkedUser)
+					linkedUsers = append(linkedUsers, linkedUser)
 
 					//Send message back to user
 					if _, err = bot.ReplyMessage(
 						event.ReplyToken,
-						linebot.NewTextMessage("Hi "+usr.Name+" your account already linked to this chatbot.")).Do(); err != nil {
+						linebot.NewTextMessage("Hi "+usr.name+" your account already linked to this chatbot.")).Do(); err != nil {
 						log.Println("err:", err)
 						return
 					}

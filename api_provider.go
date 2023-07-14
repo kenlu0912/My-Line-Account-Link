@@ -170,7 +170,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	fmt.Fprintf(w, "Your input name or password error.")
+	fmt.Fprintf(w, "您輸入的帳號或密碼錯誤，請再輸入一遍")
 }
 
 // WEB: For account link
